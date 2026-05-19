@@ -197,6 +197,13 @@ resource "google_cloud_run_service" "main" {
       template[0].metadata[0].annotations["client.knative.dev/user-image"],
       template[0].metadata[0].annotations["run.googleapis.com/client-name"],
       template[0].metadata[0].annotations["run.googleapis.com/client-version"],
+      # lassomd patch: labels written by GitHub Actions deploys + the
+      # Knative per-revision nonce. Without ignoring these, every
+      # `terraform plan` against a recently-deployed Cloud Run service
+      # plans to strip them, fighting GHA on the next deploy.
+      template[0].metadata[0].labels["client.knative.dev/nonce"],
+      template[0].metadata[0].labels["commit-sha"],
+      template[0].metadata[0].labels["managed-by"],
     ]
   }
 }
