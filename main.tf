@@ -204,6 +204,11 @@ resource "google_cloud_run_service" "main" {
       template[0].metadata[0].labels["client.knative.dev/nonce"],
       template[0].metadata[0].labels["commit-sha"],
       template[0].metadata[0].labels["managed-by"],
+      # lassomd patch: the entire `status` block is read-only / computed
+      # by Cloud Run after each revision lands (latest_*_revision_name,
+      # observed_generation, traffic[].revision_name, conditions, …).
+      # Suppressing it removes the cosmetic post-deploy plan noise.
+      status,
     ]
   }
 }
